@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'CPYDanmakuMaster_Example' do
+  pod 'CPYDanmakuMaster', :path => '../'
+
+  target 'CPYDanmakuMaster_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
