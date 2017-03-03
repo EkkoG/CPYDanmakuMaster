@@ -1,0 +1,6 @@
+framework module Pods_CPYDanmakuMaster_Example {
+  umbrella header "Pods-CPYDanmakuMaster_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

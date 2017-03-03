@@ -1,0 +1,16 @@
+PODS:
+  - CPYDanmakuMaster (0.1.0)
+
+DEPENDENCIES:
+  - CPYDanmakuMaster (from `../`)
+
+EXTERNAL SOURCES:
+  CPYDanmakuMaster:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CPYDanmakuMaster: 4c0d1e60f34eade856e21f31d69e3c292dc125fa
+
+PODFILE CHECKSUM: 901abdd5f26cf161e41fe905af1b4e88f3a0ecce
+
+COCOAPODS: 1.1.1

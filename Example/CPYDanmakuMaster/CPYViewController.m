@@ -7,17 +7,41 @@
 //
 
 #import "CPYViewController.h"
+#import <CPYDanmakuMaster/CPYDanmakuMaster.h>
 
 @interface CPYViewController ()
+
+@property (nonatomic, strong) CPYDanmakuMaster *danmakuMaster;
 
 @end
 
 @implementation CPYViewController
 
+
+- (CPYDanmakuMaster *)danmakuMaster {
+	if (!_danmakuMaster) {
+        _danmakuMaster = [[CPYDanmakuMaster alloc] init];
+        _danmakuMaster.row = 3;
+        _danmakuMaster.speed = 2;
+	}
+	return _danmakuMaster;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [self.view addSubview:self.danmakuMaster.previewView];
+    self.danmakuMaster.previewView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 100);
+    
+    for (int i = 0; i < 100; i++) {
+        int a = arc4random() % 50;
+        UILabel *l = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100 + a, 30)];
+        l.textAlignment = NSTextAlignmentCenter;
+        l.backgroundColor = [UIColor yellowColor];
+        l.text = [NSString stringWithFormat:@"%d", i];
+        [self.danmakuMaster addDanmaku:l];
+    }
 }
 
 - (void)didReceiveMemoryWarning

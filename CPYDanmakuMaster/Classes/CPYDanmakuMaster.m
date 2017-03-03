@@ -1,0 +1,161 @@
+//
+//  CPYDanmakuMaster.m
+//  Pods
+//
+//  Created by ciel on 2017/2/27.
+//
+//
+
+#import "CPYDanmakuMaster.h"
+#import "UIView+CPY_Utils.h"
+#import "NSTimer+CPY_EZ_Helper.h"
+#import <objc/runtime.h>
+
+static NSString const *kCPYDanmakuRowIdentifier = @"com.ciepy.danmaku.view.row.identifier";
+
+static CGFloat const kCPYDanmakuTimeInterval = 0.2;
+static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
+
+@interface CPYDanmakuMaster ()
+
+@property (nonatomic, strong, readwrite) UIView *previewView;
+
+@property (nonatomic, strong) NSMutableArray *danmakus;
+
+@property (nonatomic, strong) NSTimer *timer;
+
+@property (nonatomic, assign) NSInteger nextLine;
+
+@property (nonatomic, strong) NSArray *emptyIdentifiers;
+
+@end
+
+@implementation CPYDanmakuMaster
+
+- (void)dealloc
+{
+    [self.timer invalidate];
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup {
+    [self setupTimer];
+    [self setupIdentifiers];
+}
+
+- (void)setupTimer {
+    __weak typeof(self) weakSelf = self;
+    self.timer = [NSTimer cpy_ez_scheduledTimerWithTimeInterval:kCPYDanmakuTimeInterval block:^{
+        __strong typeof(self) strongSelf = weakSelf;
+        [strongSelf showDanmaku];
+    } repeats:YES];
+}
+
+- (void)setupIdentifiers {
+    NSMutableArray *arr = [NSMutableArray array];
+    for (int i = 0; i < self.row; i++) {
+        [arr addObject:@YES];
+    }
+    self.emptyIdentifiers = [arr copy];
+}
+
+- (void)setEmptyIdentifer:(BOOL)identifier atIndex:(NSInteger)index {
+    NSMutableArray *arr = [self.emptyIdentifiers mutableCopy];
+    arr[index] = @(identifier);
+    self.emptyIdentifiers = [arr copy];
+}
+
+- (void)showDanmaku {
+    if (![self haveEmpty]) {
+        return;
+    }
+    
+    if (!self.danmakus.count) {
+        return;
+    }
+    NSInteger nextLine = self.nextLine;
+    [self setEmptyIdentifer:NO atIndex:nextLine];
+    
+    UIView *v = self.danmakus.firstObject;
+    
+    [self.previewView addSubview:v];
+    
+    CGPoint p = CGPointMake(CGRectGetWidth(self.previewView.bounds), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
+    CGRect f = v.frame;
+    f.origin = p;
+    v.frame = f;
+    
+    [UIView animateWithDuration:self.speed delay:0 options:UIViewAnimationOptionTransitionNone animations:^{
+        CGPoint p = CGPointMake(-CGRectGetWidth(v.frame), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
+        CGRect f = v.frame;
+        f.origin = p;
+        v.frame = f;
+    } completion:^(BOOL finished) {
+        [v removeFromSuperview];
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self setEmptyIdentifer:YES atIndex:nextLine];
+    });
+    [self.danmakus removeObject:v];
+}
+
+- (BOOL)haveEmpty {
+    return self.nextLine != kCPYDanmakuNoEmptyIndentier;
+}
+
+- (NSInteger)nextLine {
+    _nextLine = kCPYDanmakuNoEmptyIndentier;
+    [self.emptyIdentifiers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj boolValue]) {
+            _nextLine = idx;
+            *stop = YES;
+        }
+    }];
+    return _nextLine;
+}
+
+- (void)addDanmaku:(UIView *)danmakuView {
+    if (![danmakuView cpy_haveSize]) {
+        return;
+    }
+    [self.danmakus addObject:danmakuView];
+}
+
+
+- (void)setSpeed:(CGFloat)speed {
+    _speed = speed;
+}
+
+- (void)setRow:(NSInteger)row {
+    _row = row;
+    [self setupIdentifiers];
+}
+
+- (void)setAllowOverlay:(BOOL)allowOverlay {
+    _allowOverlay = allowOverlay;
+}
+
+
+- (UIView *)previewView {
+	if (!_previewView) {
+        _previewView = [[UIView alloc] init];
+	}
+	return _previewView;
+}
+
+- (NSMutableArray *)danmakus {
+	if (!_danmakus) {
+        _danmakus = [[NSMutableArray alloc] init];
+	}
+	return _danmakus;
+}
+
+@end

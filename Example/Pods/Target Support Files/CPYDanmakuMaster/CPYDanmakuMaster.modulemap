@@ -1,0 +1,6 @@
+framework module CPYDanmakuMaster {
+  umbrella header "CPYDanmakuMaster-umbrella.h"
+
+  export *
+  module * { export * }
+}
