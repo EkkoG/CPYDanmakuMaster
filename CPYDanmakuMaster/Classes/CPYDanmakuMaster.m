@@ -13,7 +13,7 @@
 
 static NSString const *kCPYDanmakuRowIdentifier = @"com.ciepy.danmaku.view.row.identifier";
 
-static CGFloat const kCPYDanmakuTimeInterval = 0.2;
+static CGFloat const kCPYDanmakuTimeInterval = 0.02;
 static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
 
 @interface CPYDanmakuMaster ()
@@ -101,7 +101,8 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     } completion:^(BOOL finished) {
         [v removeFromSuperview];
     }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    CGFloat interval = CGRectGetWidth(v.frame) / (CGRectGetWidth(v.frame) + CGRectGetWidth(self.previewView.frame)) * self.speed;// + 0.08;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self setEmptyIdentifer:YES atIndex:nextLine];
     });
     [self.danmakus removeObject:v];
