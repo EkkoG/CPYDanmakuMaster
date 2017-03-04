@@ -9,7 +9,6 @@
 #import "CPYDanmakuMaster.h"
 #import "UIView+CPY_Utils.h"
 #import "NSTimer+CPY_EZ_Helper.h"
-#import <objc/runtime.h>
 
 static NSString const *kCPYDanmakuRowIdentifier = @"com.ciepy.danmaku.view.row.identifier";
 
@@ -23,8 +22,6 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
 @property (nonatomic, strong) NSMutableArray *danmakus;
 
 @property (nonatomic, strong) NSTimer *timer;
-
-@property (nonatomic, assign) NSInteger nextLine;
 
 @property (nonatomic, strong) NSArray *emptyIdentifiers;
 
@@ -47,8 +44,14 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
 }
 
 - (void)setup {
+    [self setDefaultConfig];
     [self setupTimer];
-    [self setupIdentifiers];
+    [self setupEmptyIdentifiers];
+}
+
+- (void)setDefaultConfig {
+    self.row = 3;
+    self.speed = 2;
 }
 
 - (void)setupTimer {
@@ -59,7 +62,7 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     } repeats:YES];
 }
 
-- (void)setupIdentifiers {
+- (void)setupEmptyIdentifiers {
     NSMutableArray *arr = [NSMutableArray array];
     for (int i = 0; i < self.row; i++) {
         [arr addObject:@YES];
@@ -81,7 +84,8 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     if (!self.danmakus.count) {
         return;
     }
-    NSInteger nextLine = self.nextLine;
+    
+    NSInteger nextLine = [self getAnEmptyRow];
     [self setEmptyIdentifer:NO atIndex:nextLine];
     
     UIView *v = self.danmakus.firstObject;
@@ -105,18 +109,18 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
 }
 
 - (BOOL)haveEmpty {
-    return self.nextLine != kCPYDanmakuNoEmptyIndentier;
+    return [self getAnEmptyRow] != kCPYDanmakuNoEmptyIndentier;
 }
 
-- (NSInteger)nextLine {
-    _nextLine = kCPYDanmakuNoEmptyIndentier;
+- (NSInteger)getAnEmptyRow {
+    __block NSInteger emptyRow = kCPYDanmakuNoEmptyIndentier;
     [self.emptyIdentifiers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj boolValue]) {
-            _nextLine = idx;
+            emptyRow = idx;
             *stop = YES;
         }
     }];
-    return _nextLine;
+    return emptyRow;
 }
 
 - (void)addDanmaku:(UIView *)danmakuView {
@@ -126,20 +130,14 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     [self.danmakus addObject:danmakuView];
 }
 
-
 - (void)setSpeed:(CGFloat)speed {
     _speed = speed;
 }
 
 - (void)setRow:(NSInteger)row {
     _row = row;
-    [self setupIdentifiers];
+    [self setupEmptyIdentifiers];
 }
-
-- (void)setAllowOverlay:(BOOL)allowOverlay {
-    _allowOverlay = allowOverlay;
-}
-
 
 - (UIView *)previewView {
 	if (!_previewView) {

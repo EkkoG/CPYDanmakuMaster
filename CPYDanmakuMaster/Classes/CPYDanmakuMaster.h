@@ -16,8 +16,6 @@
 
 @property (nonatomic, strong, readonly) UIView *previewView;
 
-@property (nonatomic, assign) BOOL allowOverlay;
-
 - (void)addDanmaku:(UIView *)danmakuView;
 
 @end
