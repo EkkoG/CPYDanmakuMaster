@@ -95,13 +95,13 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     CGPoint p = CGPointMake(CGRectGetWidth(self.previewView.bounds), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
     [v cpy_origin:p];
     
-    [UIView animateWithDuration:self.speed delay:0 options:UIViewAnimationOptionTransitionNone animations:^{
+    [UIView animateWithDuration:self.speed delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         CGPoint p = CGPointMake(-CGRectGetWidth(v.frame), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
         [v cpy_origin:p];
     } completion:^(BOOL finished) {
         [v removeFromSuperview];
     }];
-    CGFloat interval = CGRectGetWidth(v.frame) / (CGRectGetWidth(v.frame) + CGRectGetWidth(self.previewView.frame)) * self.speed;// + 0.08;
+    CGFloat interval = CGRectGetWidth(v.frame) / (CGRectGetWidth(v.frame) + CGRectGetWidth(self.previewView.frame)) * self.speed + 0.08;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self setEmptyIdentifer:YES atIndex:nextLine];
     });
