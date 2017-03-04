@@ -89,15 +89,11 @@ static NSInteger const kCPYDanmakuNoEmptyIndentier = -1;
     [self.previewView addSubview:v];
     
     CGPoint p = CGPointMake(CGRectGetWidth(self.previewView.bounds), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
-    CGRect f = v.frame;
-    f.origin = p;
-    v.frame = f;
+    [v cpy_origin:p];
     
     [UIView animateWithDuration:self.speed delay:0 options:UIViewAnimationOptionTransitionNone animations:^{
         CGPoint p = CGPointMake(-CGRectGetWidth(v.frame), CGRectGetHeight(self.previewView.bounds) / self.row * nextLine) ;
-        CGRect f = v.frame;
-        f.origin = p;
-        v.frame = f;
+        [v cpy_origin:p];
     } completion:^(BOOL finished) {
         [v removeFromSuperview];
     }];

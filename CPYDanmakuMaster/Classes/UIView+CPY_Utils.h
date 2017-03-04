@@ -11,5 +11,6 @@
 @interface UIView (CPY_Utils)
 
 - (BOOL)cpy_haveSize;
+- (void)cpy_origin:(CGPoint)origin;
 
 @end

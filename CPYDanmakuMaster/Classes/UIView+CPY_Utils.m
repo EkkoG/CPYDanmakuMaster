@@ -22,4 +22,11 @@
     }
     return YES;
 }
+
+- (void)cpy_origin:(CGPoint)origin {
+    CGRect f = self.frame;
+    f.origin = origin;
+    self.frame = f;
+}
+
 @end
